@@ -1,1 +1,1 @@
-mvn resources:resources clojure:compile exec:java -Dexec.mainClass=holmes.history-replay $*
+mvn clean resources:resources clojure:compile exec:java -Dexec.mainClass=holmes.replay $*
