@@ -1,8 +1,9 @@
 (ns holmes.replay
   "History replay functionality."
   (:gen-class)
-  (:use clojure.contrib.logging somnium.congomongo)
-  (:import [javax.jms] [org.apache.activemq ActiveMQConnectionFactory] [org.apache.activemq.command ActiveMQTextMessage]))
+  (:use clojure.contrib.logging somnium.congomongo clojure.contrib.duck-streams)
+  (:require [org.danlarkin.json :as json])
+  (:import [org.apache.activemq ActiveMQConnectionFactory] [org.apache.activemq.util ByteSequence]))
 
 
 (mongo! :db "holmes")
@@ -25,10 +26,17 @@
       (reset! *producer* producer))))
 
 
+(defn event-type
+  [coll]
+  (.toUpperCase (subs coll 7)))
+
+
 (defn send-message
-  [obj]
-  (let [obj (assoc obj :timestamp (. System currentTimeMillis))
-        message (doto (.createMessage @*session*) (.setProperties (zipmap (map name (keys obj)) (vals obj))))]
+  [coll obj]
+  (let [obj (dissoc obj :timestamp)
+        message (doto (.createMapMessage @*session*)
+      (.setProperties {"eventtype" (event-type coll) "event" (zipmap (map name (keys obj)) (vals obj))})
+      )]
     (.send @*producer* message)))
 
 
@@ -38,8 +46,9 @@
     (loop [skip 0]
       (let [batch (map #(dissoc % :_id :_ns) (fetch coll :limit batch-size :skip skip))]
         (doseq [event batch]
-          (. Thread (sleep delay))
-          (send-message event))
+          (println event)
+          (send-message coll event)
+          (. Thread (sleep delay)))
         (if (> (count batch) 0) (recur (+ skip batch-size)) (recur 0))))))
 
 
@@ -50,3 +59,5 @@
     (doseq [coll (collections)]
       (future (send-events coll)))))
 
+
+(-main)

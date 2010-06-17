@@ -64,10 +64,26 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-core</artifactId>
-            <version>5.3.0</version>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-core</artifactId>
+        <version>5.3.0</version>
         </dependency>
+
+        <!--<dependency>-->
+        <!--<groupId>org.apache.camel</groupId>-->
+        <!--<artifactId>camel-jms</artifactId>-->
+        <!--<version>2.2.0</version>-->
+        <!--</dependency>-->
+
+        <dependency>
+        <groupId>org.codehaus.stomp</groupId>
+        <artifactId>stompconnect</artifactId>
+        <version>1.0</version>
+        </dependency>
+
+
+
+
 
         <!-- Dependencies from congomongo (snapshots) -->
         <dependency>
@@ -86,11 +102,11 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-            <version>2.2.0</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.apache.camel</groupId>-->
+        <!--<artifactId>camel-core</artifactId>-->
+        <!--<version>2.2.0</version>-->
+        <!--</dependency>-->
 
     </dependencies>
 
