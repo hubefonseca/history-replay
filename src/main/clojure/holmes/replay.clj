@@ -34,8 +34,9 @@
 (defn send-message
   [coll obj]
   (let [obj (dissoc obj :timestamp)
-        message (doto (.createMapMessage @*session*)
-      (.setProperties {"eventtype" (event-type coll) "event" (zipmap (map name (keys obj)) (vals obj))})
+        message (doto (.createTextMessage @*session*)
+      (.setText (json/encode-to-str obj))
+      (.setProperties {"eventtype" (event-type coll)})
       )]
     (.send @*producer* message)))
 
@@ -57,7 +58,7 @@
   (do (start-connection)
     (println "Processing...")
     (doseq [coll (collections)]
-      (future (send-events coll)))))
+      (cond (not (.contains coll "system.indexes")) (future (send-events coll))))))
 
 
 (-main)
