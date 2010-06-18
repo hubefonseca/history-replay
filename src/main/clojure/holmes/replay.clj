@@ -47,7 +47,6 @@
     (loop [skip 0]
       (let [batch (map #(dissoc % :_id :_ns) (fetch coll :limit batch-size :skip skip))]
         (doseq [event batch]
-          (println event)
           (send-message coll event)
           (. Thread (sleep delay)))
         (if (> (count batch) 0) (recur (+ skip batch-size)) (recur 0))))))
@@ -61,4 +60,4 @@
       (cond (not (.contains coll "system.indexes")) (future (send-events coll))))))
 
 
-(-main)
+;(-main)
